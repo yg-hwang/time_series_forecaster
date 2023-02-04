@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 from prophet import Prophet
-from base import BaseForecaster
 
-from utils import get_lunar_date
+from .base import BaseForecaster
+from .utils import get_lunar_date
 
 
 class PROPHET(BaseForecaster):

@@ -1,8 +1,9 @@
 import pandas as pd
 from pmdarima.arima import auto_arima
-from base import BaseForecaster
-from utils import add_date
-from ts_preprocess import generate_future_dataframe
+
+from .base import BaseForecaster
+from .utils import add_date
+from .ts_preprocess import generate_future_dataframe
 
 
 class ARIMA(BaseForecaster):
@@ -43,5 +44,5 @@ class ARIMA(BaseForecaster):
             freq=freq,
             steps=steps,
         )
-        df_fcst["yhat"] = pd.Series(pred, index=future_date.index)
+        df_fcst["yhat"] = pd.Series(pred, index=future_date["date"])
         return df_fcst.reset_index()[["date", "yhat", "yhat_lower", "yhat_upper"]]

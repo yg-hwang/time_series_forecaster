@@ -1,7 +1,7 @@
 import pandas as pd
 
-from ts_arima import ARIMA
-from ts_prophet import PROPHET
+from .ts_arima import ARIMA
+from .ts_prophet import PROPHET
 
 
 class TimeSeriesForecaster(ARIMA, PROPHET):

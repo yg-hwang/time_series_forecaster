@@ -4,7 +4,8 @@ from functools import reduce
 from datetime import datetime
 from statsmodels.tsa.seasonal import STL
 from sklearn.preprocessing import MinMaxScaler
-from utils import add_date
+
+from .utils import add_date
 
 KST = pytz.timezone("Asia/Seoul")
 TODAY = datetime.now(KST).strftime("%Y-%m-%d")
