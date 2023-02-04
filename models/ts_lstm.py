@@ -12,7 +12,8 @@ from tensorflow.keras.losses import MSE
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.callbacks import ReduceLROnPlateau
-from time_series_forecaster.src.models.utils import add_date
+
+from utils import add_date
 
 
 class ForecastLSTM:
