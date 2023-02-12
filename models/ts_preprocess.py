@@ -1,7 +1,7 @@
 import pytz
 import pandas as pd
 from functools import reduce
-from datetime import datetime
+from datetime import datetime, timedelta
 from statsmodels.tsa.seasonal import STL
 from sklearn.preprocessing import MinMaxScaler
 
@@ -101,3 +101,54 @@ def decompose_seasonality_trend(df: pd.DataFrame, target: str = None) -> pd.Data
         dfs,
     )
     return df_stl
+
+
+def create_cutoffs(cutoff_start: str, cutoff_end: str, freq: str = "D") -> list:
+    """
+    dataset을 train, test으로 분리할 때 사용할 cutoff 리스트를 생성한다.
+
+    Example
+    --------
+    create_cutoffs(cutoff_start="2021-10-01", cutoff_end="2021-12-01", freq="D")
+    >>> ["2021-10-01", "2021-10-02", "2021-10-03", ... , "2021-11-30", "2021-12-01"]
+
+    create_cutoffs(cutoff_start="2021-10-01", cutoff_end="2021-12-01", freq="W")
+    >>> ["2021-10-03", "2021-10-10", "2021-10-17", ... , "2021-11-21", "2021-11-28"]
+
+    create_cutoffs(cutoff_start="2021-10-01", cutoff_end="2021-12-01", freq="M")
+    >>> ["2021-10-01", "2021-11-01", "2021-12-01"]
+    """
+
+    d0 = datetime.strptime(cutoff_start, "%Y-%m-%d")
+    d1 = datetime.strptime(cutoff_end, "%Y-%m-%d")
+    interval = (d1 - d0).days
+
+    if freq == "D":
+        cutoffs = [d0 + timedelta(days=x) for x in range(interval + 1)]
+        cutoffs = sorted([datetime.strftime(dt, "%Y-%m-%d") for dt in cutoffs])
+        return cutoffs
+
+    elif freq == "W":
+        cutoffs = [d0 + timedelta(days=x) for x in range(interval + 1)]
+        cutoffs_sunday = [cutoff for cutoff in cutoffs if cutoff.weekday() == 6]
+        cutoffs_sunday = sorted(
+            [datetime.strftime(dt, "%Y-%m-%d") for dt in cutoffs_sunday]
+        )
+        return cutoffs_sunday
+
+    elif freq == "M":
+        cutoffs = [cutoff_start]
+        if cutoff_start == cutoff_end:
+            return cutoffs
+        else:
+            interval = int(interval / 30)
+            for i in range(1, interval + 1):
+                if i < interval:
+                    cutoffs.append(add_date(date=cutoff_start, delta=i, freq="M"))
+                else:
+                    cutoff_end = cutoff_end[:-2] + "01"
+                    cutoffs.append(cutoff_end)
+            return cutoffs
+
+    else:
+        raise ValueError("'freq' should be one of 'D', 'W' and 'M'.")
