@@ -13,7 +13,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 
-from utils import add_date
+from .utils import add_date
 
 
 class ForecastLSTM:
@@ -371,7 +371,6 @@ class ForecastLSTM:
         # Features
         X_test = df[(df.index < cutoff)].iloc[-seq_len:, :-1].sort_index(ascending=True)
         X_test["seq_in"] = cutoff
-        # x_data["timestep"] = pd.Series(np.arange(seq_len) + 1, x_data.index)
         X_test["timestep"] = X_test.index
         X_test = X_test.set_index(["seq_in", "timestep"])
 
